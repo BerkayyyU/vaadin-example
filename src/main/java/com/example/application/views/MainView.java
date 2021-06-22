@@ -33,6 +33,15 @@ public class MainView extends VerticalLayout { //MainView ana sayfa
         Binder<Person> binder = new Binder<>();
 
         Button btnNew = new Button("Add", VaadinIcon.INSERT.create());
+
+        TextField txtFilter = new TextField("","Key");
+        Button btnFilter = new Button("Search", VaadinIcon.SEARCH.create());
+        btnFilter.addClickListener(buttonClickEvent -> {
+            refreshData(txtFilter.getValue());
+        });
+        HorizontalLayout filterGroup = new HorizontalLayout();
+        filterGroup.add(txtFilter,btnFilter);
+
         Dialog dialog = new Dialog();
         dialog.setModal(true);
 
@@ -66,7 +75,7 @@ public class MainView extends VerticalLayout { //MainView ana sayfa
             }
 
             personService.save(person);
-            refreshData();
+            refreshData(txtFilter.getValue().toString());
 
             dialog.close();
         });
@@ -93,12 +102,19 @@ public class MainView extends VerticalLayout { //MainView ana sayfa
         });*/
 
         add(grid);
-        add(new H3("Person List"),btnNew, grid);
+        add(new H3("Person List"),btnNew,filterGroup, grid);
     }
 
     private void refreshData(){
         List<Person> personList = new ArrayList<>();
         personList.addAll(personService.getList());
+
+        grid.setItems(personList);
+    }
+
+    private void refreshData(String filter){
+        List<Person> personList = new ArrayList<>();
+        personList.addAll(personService.getList(filter));
 
         grid.setItems(personList);
     }

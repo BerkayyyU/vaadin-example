@@ -24,6 +24,13 @@ public class PersonServiceImpl implements PersonService{
     }
 
     @Override
+    public Set<Person> getList(String filter) {
+        Set<Person> personSet = new HashSet<>();
+        personRepository.findByNameContainingOrSurnameContaining(filter,filter).iterator().forEachRemaining(personSet::add); // Repodaki tüm personları listeliyor
+        return personSet;
+    }
+
+    @Override
     public Person save(Person p) {
         return personRepository.save(p); //Repoya person ekliyor
     }
