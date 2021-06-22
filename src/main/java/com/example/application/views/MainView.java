@@ -1,7 +1,7 @@
 package com.example.application.views;
 
 import com.example.application.models.Person;
-import com.vaadin.flow.component.Text;
+import com.example.application.services.PersonService;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
@@ -20,7 +20,11 @@ import java.util.List;
 
 @Route
 public class MainView extends VerticalLayout { //MainView ana sayfa
-    public MainView(){
+
+    private final PersonService personService; //Dependency injection
+
+    public MainView(PersonService personService){
+        this.personService = personService;
 
         Button btnNew = new Button("Add", VaadinIcon.INSERT.create());
         Dialog dialog = new Dialog();
@@ -52,9 +56,7 @@ public class MainView extends VerticalLayout { //MainView ana sayfa
         });
 
         List<Person> personList = new ArrayList<>();
-        personList.add(new Person(1L,"Ali","Duru","444555"));
-        personList.add(new Person(2L,"Aliye","Duru","2222"));
-        personList.add(new Person(3L,"Test","Test","333"));
+        personList.addAll(personService.getList());
 
         Grid<Person> grid = new Grid<>(Person.class);
         grid.setItems(personList);
