@@ -13,6 +13,7 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.ValidationException;
@@ -30,10 +31,16 @@ public class MainView extends VerticalLayout { //MainView ana sayfa
 
     TextField txtFilter = new TextField();
 
+    Dialog dialogPerson = new Dialog();
+
+    Binder<Person> binder = new Binder<>();
+
+    Long itemIdForEdition=0L;
+
     public MainView(PersonService personService){
         this.personService = personService;
 
-        Binder<Person> binder = new Binder<>();
+
 
         Button btnNew = new Button("Add", VaadinIcon.INSERT.create());
 
@@ -45,13 +52,14 @@ public class MainView extends VerticalLayout { //MainView ana sayfa
         HorizontalLayout filterGroup = new HorizontalLayout();
         filterGroup.add(txtFilter,btnFilter);
 
-        Dialog dialog = new Dialog();
-        dialog.setModal(true);
+        dialogPerson.setModal(true);
 
         TextField txtName = new TextField("Name","Enter your name");
         TextField txtSurname = new TextField("Surname","Enter your surname");
         TextField txtPhoneNumber = new TextField("Phone Number","Enter your phone number");
+        NumberField txtId = new NumberField("Id");
 
+        //binder.bind(txtId,Person::getId,Person::setId);
         binder.bind(txtName,Person::getName,Person::setName);
         binder.bind(txtSurname,Person::getSurname,Person::setSurname);
         binder.bind(txtPhoneNumber,Person::getPhoneNumber,Person::setPhoneNumber);
@@ -65,7 +73,7 @@ public class MainView extends VerticalLayout { //MainView ana sayfa
         Button btnSave = new Button("Save");
         Button btnCancel = new Button("Cancel");
         btnCancel.addClickListener(buttonClickEvent -> {
-            dialog.close();
+            dialogPerson.close();
         });
 
         btnSave.addClickListener(buttonClickEvent -> {
@@ -77,19 +85,21 @@ public class MainView extends VerticalLayout { //MainView ana sayfa
                 e.printStackTrace();
             }
 
+            person.setId(itemIdForEdition);
             personService.save(person);
             refreshData(txtFilter.getValue().toString());
 
-            dialog.close();
+            dialogPerson.close();
         });
 
         horizontalLayout.add(btnCancel,btnSave);
 
-        dialog.add(new H2("New Person"), formLayout,horizontalLayout);
+        dialogPerson.add(new H2("New Person"), formLayout,horizontalLayout);
 
         btnNew.addClickListener(buttonClickEvent -> {
+            itemIdForEdition = 0L;
             binder.readBean(new Person()); // Nesneden değerleri okuyup textField'lara yazıyor
-            dialog.open();
+            dialogPerson.open();
         });
 
         refreshData();
@@ -147,7 +157,10 @@ public class MainView extends VerticalLayout { //MainView ana sayfa
 
         Button btnUpdate = new Button("Update");
         btnUpdate.addClickListener(buttonClickEvent -> {
-            Notification.show("Update item clicked on " +  item.getName());
+            //Notification.show("Update item clicked on " +  item.getName());
+            itemIdForEdition= item.getId();
+            binder.readBean(item);
+            dialogPerson.open();
         });
 
         HorizontalLayout horizontalLayout = new HorizontalLayout();
