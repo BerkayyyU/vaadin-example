@@ -3,6 +3,7 @@ package com.example.application.views;
 import com.example.application.models.Person;
 import com.example.application.services.PersonService;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
@@ -27,6 +28,8 @@ public class MainView extends VerticalLayout { //MainView ana sayfa
 
     Grid<Person> grid = new Grid<>(Person.class);
 
+    TextField txtFilter = new TextField();
+
     public MainView(PersonService personService){
         this.personService = personService;
 
@@ -34,7 +37,7 @@ public class MainView extends VerticalLayout { //MainView ana sayfa
 
         Button btnNew = new Button("Add", VaadinIcon.INSERT.create());
 
-        TextField txtFilter = new TextField("","Key");
+        txtFilter.setPlaceholder("Key");
         Button btnFilter = new Button("Search", VaadinIcon.SEARCH.create());
         btnFilter.addClickListener(buttonClickEvent -> {
             refreshData(txtFilter.getValue());
@@ -119,11 +122,27 @@ public class MainView extends VerticalLayout { //MainView ana sayfa
         grid.setItems(personList);
     }
 
+    private void onDelete(ConfirmDialog.ConfirmEvent confirmEvent){
+
+    }
+
     private HorizontalLayout createRemoveButton(Grid<Person> grid, Person item){
         @SuppressWarnings("unchecked")
         Button btnDelete = new Button("Delete");
         btnDelete.addClickListener(buttonClickEvent -> {
-            Notification.show("Delte item clicked on: " +  item.getName());
+            //Notification.show("Delte item clicked on: " +  item.getName());
+
+            ConfirmDialog dialog = new ConfirmDialog("Confirm Delete",
+                    "Are you sure you want to delete this record?", "Delete", confirmEvent -> {
+                personService.delete(item);
+                refreshData(txtFilter.getValue().toString());
+            }, "Cancel", cancelEvent -> {
+
+            });
+            dialog.setConfirmButtonTheme("error primary");
+            dialog.open();
+
+
         });
 
         Button btnUpdate = new Button("Update");

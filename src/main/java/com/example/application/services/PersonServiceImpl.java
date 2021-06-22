@@ -34,4 +34,9 @@ public class PersonServiceImpl implements PersonService{
     public Person save(Person p) {
         return personRepository.save(p); //Repoya person ekliyor
     }
+
+    @Override
+    public void delete(Person p) {
+        personRepository.delete(p);
+    }
 }

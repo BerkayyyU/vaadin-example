@@ -8,4 +8,5 @@ public interface PersonService {
     Set<Person> getList();
     Set<Person> getList(String filter);
     Person save(Person p);
+    void delete(Person p);
 }
