@@ -2,6 +2,7 @@ package com.example.application.views;
 
 import com.example.application.models.Person;
 import com.example.application.services.PersonService;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
 import com.vaadin.flow.component.dialog.Dialog;
@@ -18,6 +19,7 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.VaadinSession;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,8 +42,10 @@ public class MainView extends VerticalLayout { //MainView ana sayfa
     public MainView(PersonService personService){
         this.personService = personService;
 
+        if(VaadinSession.getCurrent().getSession().getAttribute("LoggedInSystemUserId")==null) { // get session'daki değerini okumak için setAttr sessiondaki değişkene değer yazmak için
+            UI.getCurrent().getPage().setLocation("login"); //systemuser yoksa login page'a yönlendir
 
-
+        }
         Button btnNew = new Button("Add", VaadinIcon.INSERT.create());
 
         txtFilter.setPlaceholder("Key");
